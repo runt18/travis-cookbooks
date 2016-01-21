@@ -64,6 +64,7 @@ default['travis_build_environment']['rvmrc_env'] = {
   'rvm_with_default_gems' => 'rake bundler',
   'rvm_without_gems' => 'rubygems-bundler'
 }
+default['travis_build_environment']['gometalinter_go_version'] = '1.5'
 default['travis_build_environment']['golang_libraries'] = %w(
   golang.org/x/tools/cmd/cover
   github.com/alecthomas/gometalinter

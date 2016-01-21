@@ -127,28 +127,25 @@ gimme_default_version = node['gimme']['default_version'].to_s
 gimme_versions = Array(node['gimme']['versions'])
 gimme_versions += [gimme_default_version] unless gimme_default_version.empty?
 
-gimme_versions.each do |version|
-  version = version.sub('go', '')
-  next if version < '1.5'
+gometalinter_version = gimme_versions.select { |version| version.start_with?(node['travis_build_environment']['gometalinter_go_version']) }.sort.last
 
-  Array(node['travis_build_environment']['golang_libraries']).each do |lib|
-    bash "install #{lib} for go #{version}" do
-      code %{eval "$(gimme #{version})" && go get -u #{lib}}
-      flags '-l'
-      user node['travis_build_environment']['user']
-      group node['travis_build_environment']['group']
-      environment('HOME' => node['travis_build_environment']['home'])
-    end
-  end
-
-  bash "install gometalinter tools for #{version}" do
-    code %{eval "$(gimme #{version})" && gometalinter --install --update}
+Array(node['travis_build_environment']['golang_libraries']).each do |lib|
+  bash "install #{lib} for go #{gometalinter_version}" do
+    code %{eval "$(gimme #{gometalinter_version})" && go get -u #{lib}}
     flags '-l'
     user node['travis_build_environment']['user']
     group node['travis_build_environment']['group']
     environment('HOME' => node['travis_build_environment']['home'])
-    only_if { node['travis_build_environment']['install_gometalinter_tools'] }
   end
+end
+
+bash "install gometalinter tools for #{gometalinter_version}" do
+  code %{eval "$(gimme #{gometalinter_version})" && gometalinter --install --update}
+  flags '-l'
+  user node['travis_build_environment']['user']
+  group node['travis_build_environment']['group']
+  environment('HOME' => node['travis_build_environment']['home'])
+  only_if { node['travis_build_environment']['install_gometalinter_tools'] }
 end
 
 include_recipe 'travis_build_environment::kerl'
