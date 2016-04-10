@@ -27,7 +27,7 @@ def _read_pct_data_used(host=DOCKER_HOST):
     * the possible units for data space used are KB, MB, or GB
     """
     info = json.load(
-        urllib.urlopen('{}/info'.format(host.replace('tcp://', 'http://')))
+        urllib.urlopen('{0}/info'.format(host.replace('tcp://', 'http://')))
     )
 
     driver_status = dict(info['DriverStatus'])
@@ -48,7 +48,7 @@ def read(data=None):
 
 def write(val, data=None):
     for value in val.values:
-        print('{} ({}): {}'.format(val.plugin, val.type, value))
+        print('{0} ({1}): {2}'.format(val.plugin, val.type, value))
 
 
 def config(cfg):
